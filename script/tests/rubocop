@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# script/tests/rubocop: Run Rubocop test suite
+
+set -e
+
+cd "$(dirname "$0")/../.."
+
+#export BUNDLE_GEMFILE=./test/Gemfile
+bundle exec rubocop \
+  --config test/.rubocop.yml \
+  --display-style-guide \
+  --extra-details \
+  --display-cop-names \
+  --parallel "$@"

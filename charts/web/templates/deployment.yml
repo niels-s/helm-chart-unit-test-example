@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ required "A name is required" .Release.Name | quote }}
+  namespace: {{ required "A namespace is required" .Release.Namespace | quote }}
+  labels:
+  {{- include "web.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "web.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "web.selectorLabels" . | nindent 8 }}
+      annotations:
+        {{/*  These checksum are in place to make sure the pods are rotated when they change, see
+              https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments */}}
+        {{- if .Values.web.secrets }}
+        checksum/secrets: {{ include (print $.Template.BasePath "/secrets.yml") . | sha256sum }}
+        {{- end }}
+    spec:
+      containers:
+        - name: web
+          image: {{ printf "%s:%s" (required "A 'image.repository' with the code" .Values.image.repository) (required "A 'image.tag' with the version" .Values.image.tag) | quote }}
+          {{- if .Values.web.arguments }}
+          args:
+            {{- range .Values.web.arguments }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          ports:
+            - containerPort: {{ .Values.port }}
+          {{- if .Values.web.secrets }}
+          envFrom:
+            - secretRef:
+                name: {{ printf "%s-secrets" $.Release.Name | replace "_" "-" | quote }}
+          {{- end }}

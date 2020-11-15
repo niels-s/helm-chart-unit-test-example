@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# script/tests/minitest: Run Minitest test suite
+
+set -e
+
+cd "$(dirname "$0")/../.."
+
+#export BUNDLE_GEMFILE=./test/Gemfile
+bundle exec m -r ${@:-test/charts}

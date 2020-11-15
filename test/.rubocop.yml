@@ -1,0 +1,27 @@
+require: rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.4
+  Exclude:
+    - 'vendor/**/*'
+
+Layout/LineLength:
+  Exclude:
+    - 'charts/**/*'
+
+Metrics/MethodLength:
+  Max: 15
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+RSpec/DescribeClass:
+  Enabled: false # using minitest
+
+Metrics/BlockLength:
+  Exclude:
+    - 'charts/**/*'
